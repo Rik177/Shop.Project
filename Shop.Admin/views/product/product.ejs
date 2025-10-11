@@ -51,7 +51,14 @@
         </div>
     <% } %>
 
-    
+    <% if (similarProducts?.length) { %>
+        <h2>Similar products</h2>
+        <div class="similar-products-list">
+            <% similarProducts.forEach(function(similar) { %>
+                <%- include('similar-product', { similar: similar }) %>
+            <% }); %>
+        </div>
+    <% } %>
 
     <div class="product-edit-footer">
         <button type="submit">Save changes</button>

@@ -1,0 +1,22 @@
+<div class="similar-product-item">
+    <div class="image">
+        <img src="<%= similar.thumbnail?.url || "img/product-placeholder.png" %>"
+            alt="<%= similar.title %>">
+    </div>
+    <div class="info">
+        <a class="title" href="<%= `../${ similar.id }` %>">
+            <%= similar.title %>
+        </a>
+        <div>
+            <span class="label">Price:</span> <%= similar.price %>
+        </div>
+    </div>
+    <div class="remove-similar-product">
+        <label for="similar-<%= similar.id %>">Mark to remove</label>
+        <input type="checkbox"
+            id="similar-<%= similar.id %>"
+            value="<%= similar.id %>"
+            name="similarProductsToRemove">
+    </div>
+</div>
+
