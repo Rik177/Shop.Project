@@ -133,7 +133,7 @@ productsRouter.post('/', async (
       await connection.query<OkPacket>(INSERT_PRODUCT_IMAGES_QUERY, [values]);
     }
 
-    
+    // Получаем созданный товар из базы данных
     const [rows] = await connection.query<IProductEntity[]>(
       "SELECT * FROM products WHERE product_id = ?",
       [productId]
@@ -141,25 +141,15 @@ productsRouter.post('/', async (
 
     if (!rows?.[0]) {
       res.status(500);
-      res.send("Failed to retrieve created product");
+      res.send("Error retrieving created product");
       return;
     }
 
-    
-    const [imageRows] = await connection.query<IProductImageEntity[]>(
-      "SELECT * FROM images WHERE product_id = ?",
-      [productId]
-    );
-
-    
-    const product = mapProductsEntity(rows)[0];
-    if (imageRows.length) {
-      product.images = mapImagesEntity(imageRows);
-      product.thumbnail = product.images.find(image => image.main) || product.images[0];
-    }
+    // Маппим данные товара
+    const createdProduct = mapProductsEntity(rows)[0];
 
     res.status(201);
-    res.send(product);
+    res.send(createdProduct);
   } catch (e) {
     throwServerError(res, e);
   }
