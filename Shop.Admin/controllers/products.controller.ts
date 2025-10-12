@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { getProduct, getProducts, removeProduct, searchProducts, updateProduct } from "../models/products.model";
+import { getProduct, getProducts, getSimilarProducts, getAvailableProductsForSimilar, removeProduct, searchProducts, updateProduct } from "../models/products.model";
 import { IProductFilterPayload } from "@Shared/types";
 import { IProductEditData } from "../types";
 
@@ -45,10 +45,14 @@ productsRouter.get('/:id', async (
 ) => {
   try {
     const product = await getProduct(req.params.id);
-
+    const similarProducts = await getSimilarProducts(req.params.id) || [];
+    const availableProducts = await getAvailableProductsForSimilar(req.params.id) || [];
+    
     if (product) {
       res.render("product/product", {
-        item: product
+        item: product,
+        similarProducts: similarProducts,
+        availableProducts: availableProducts
       });
     } else {
       res.render("product/empty-product", {
@@ -89,3 +93,5 @@ productsRouter.post('/save/:id', async (
     throwServerError(res, e);
   }
 });
+
+

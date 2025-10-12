@@ -9,6 +9,8 @@ export interface IProductEditData {
   newImages?: string;
   commentsToRemove: string | string[];
   imagesToRemove: string | string[];
+  similarToRemove?: string | string[];
+  similarToAdd?: string | string[];
 }
 
 

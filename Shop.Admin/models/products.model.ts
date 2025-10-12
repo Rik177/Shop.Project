@@ -1,7 +1,7 @@
 import axios from "axios";
-import { IProduct, IProductFilterPayload } from "@Shared/types";
+import { IProduct, IProductFilterPayload, ISimilarProduct, similarProductsCreatePayload } from "@Shared/types";
 import { IProductEditData } from "../types";
-import { API_HOST } from "./const";
+import { API_HOST } from "./const"; 
 
 export async function getProducts(): Promise<IProduct[]> {
   const { data } = await axios.get<IProduct[]>(`${API_HOST}/products`);
@@ -86,6 +86,20 @@ export async function updateProduct(
       });
     }
 
+    if (formData.similarToRemove && compileIdsToRemove(formData.similarToRemove).length > 0) {
+      const similarIds = compileIdsToRemove(formData.similarToRemove);
+      await axios.delete(`${API_HOST}/products/similar`, { data: similarIds });
+    }
+
+    if (formData.similarToAdd && compileIdsToRemove(formData.similarToAdd).length > 0) {
+      const similarIds = compileIdsToRemove(formData.similarToAdd);
+      const pairs = similarIds.map(similarId => ({
+        productId: productId,
+        similarId: similarId
+      }));
+      await axios.post(`${API_HOST}/products/similar`, pairs);
+    }
+
     await axios.patch(`${API_HOST}/products/${productId}`, {
       title: formData.title,
       description: formData.description,
@@ -94,4 +108,24 @@ export async function updateProduct(
   } catch (e) {
     console.log(e);
   }
+}
+
+export async function getSimilarProducts(productId: string): Promise<ISimilarProduct[]> {
+  const { data } = await axios.get<ISimilarProduct[]>(`${API_HOST}/products/similar/${productId}`);
+  return data || [];
+}
+
+export async function getAvailableProductsForSimilar(productId: string): Promise<IProduct[]> {
+  const { data } = await axios.get<IProduct[]>(`${API_HOST}/products/available-for-similar/${productId}`);
+  return data || [];
+}
+
+export async function addSimilarProducts(
+  pairs: similarProductsCreatePayload[]
+): Promise<void> {
+  await axios.post(`${API_HOST}/products/similar`, pairs);
+}
+
+export async function removeSimilarProducts(ids: string[]): Promise<void> {
+  await axios.delete(`${API_HOST}/products/similar`, { data: ids });
 }

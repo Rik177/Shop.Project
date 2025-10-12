@@ -42,7 +42,7 @@ export interface IUserRequisitesEntity extends IAuthRequisites, RowDataPacket {
   id: number;
 }   
 
-export type similarProductsCreatePayload = Omit<ISimilarProduct, "id">;
+
 
 export interface ISimilarProductEntity extends ISimilarProduct, RowDataPacket {
   product_id: string;

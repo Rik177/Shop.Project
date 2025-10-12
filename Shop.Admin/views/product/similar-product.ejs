@@ -4,7 +4,7 @@
             alt="<%= similar.title %>">
     </div>
     <div class="info">
-        <a class="title" href="<%= `../${ similar.id }` %>">
+        <a class="title" href="<%= `${ similar.id }` %>">
             <%= similar.title %>
         </a>
         <div>
@@ -16,7 +16,7 @@
         <input type="checkbox"
             id="similar-<%= similar.id %>"
             value="<%= similar.id %>"
-            name="similarProductsToRemove">
+            name="similarToRemove">
     </div>
 </div>
 

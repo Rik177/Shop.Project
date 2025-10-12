@@ -20,7 +20,8 @@ import {
   REPLACE_PRODUCT_THUMBNAIL, UPDATE_PRODUCT_FIELDS
 } from "../services/queries";
 import { param, body, validationResult } from "express-validator";
-import { ISimilarProductEntity, similarProductsCreatePayload } from "../../types";
+import { ISimilarProductEntity } from "../../types";
+import { similarProductsCreatePayload } from "@Shared/types";
 
 export const productsRouter = Router();
 
@@ -132,8 +133,33 @@ productsRouter.post('/', async (
       await connection.query<OkPacket>(INSERT_PRODUCT_IMAGES_QUERY, [values]);
     }
 
+    
+    const [rows] = await connection.query<IProductEntity[]>(
+      "SELECT * FROM products WHERE product_id = ?",
+      [productId]
+    );
+
+    if (!rows?.[0]) {
+      res.status(500);
+      res.send("Failed to retrieve created product");
+      return;
+    }
+
+    
+    const [imageRows] = await connection.query<IProductImageEntity[]>(
+      "SELECT * FROM images WHERE product_id = ?",
+      [productId]
+    );
+
+    
+    const product = mapProductsEntity(rows)[0];
+    if (imageRows.length) {
+      product.images = mapImagesEntity(imageRows);
+      product.thumbnail = product.images.find(image => image.main) || product.images[0];
+    }
+
     res.status(201);
-    res.send(`Product id:${productId} has been added!`);
+    res.send(product);
   } catch (e) {
     throwServerError(res, e);
   }
@@ -160,8 +186,8 @@ productsRouter.delete("/similar",
       }
 
       const [info] = await connection.query<OkPacket>(
-        "DELETE FROM similar_products WHERE product_id IN (?) OR similar_id IN (?)",
-        [req.body, req.body]
+        "DELETE FROM similar_products WHERE similar_id IN (?)",
+        [req.body]
       );
 
       if (info.affectedRows === 0) {
@@ -405,7 +431,64 @@ productsRouter.get('/similar/:id',
       [ids]
     );
 
-    res.send(products);
+    const [imageRows] = await connection.query<IProductImageEntity[]>(
+      "SELECT * FROM images WHERE product_id IN (?)",
+      [ids]
+    );
+
+    const mappedProducts = mapProductsEntity(products);
+    const withImages = enhanceProductsImages(mappedProducts, imageRows);
+
+    res.send(withImages);
+  } catch (e) {
+    throwServerError(res, e);
+  }
+});
+
+productsRouter.get('/available-for-similar/:id',
+  [ param("id").isUUID().withMessage("Product id is not UUID") ],
+  async (
+  req: Request<{ id: string }>,
+  res: Response
+  ) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+      res.status(400);
+      res.json({ errors: errors.array() });
+      return;
+  }
+    
+  try { 
+    const currentProductId = req.params.id;
+    
+    
+    const [similarRows] = await connection.query<ISimilarProductEntity[]>(
+      "SELECT similar_id FROM similar_products WHERE product_id = ?",
+      [currentProductId]
+    );
+    
+    const similarIds = similarRows.map(row => row.similar_id);
+    const excludeIds = [...similarIds, currentProductId];
+    
+    const [products] = await connection.query<IProductEntity[]>(
+      `SELECT * FROM products WHERE product_id NOT IN (${excludeIds.map(() => '?').join(',')})`,
+      excludeIds
+    );
+
+    const productIds = products.map(p => p.product_id);
+    if (productIds.length > 0) {
+      const [imageRows] = await connection.query<IProductImageEntity[]>(
+        "SELECT * FROM images WHERE product_id IN (?)",
+        [productIds]
+      );
+
+      const mappedProducts = mapProductsEntity(products);
+      const withImages = enhanceProductsImages(mappedProducts, imageRows);
+      
+      res.send(withImages);
+    } else {
+      res.send([]);
+    }
   } catch (e) {
     throwServerError(res, e);
   }

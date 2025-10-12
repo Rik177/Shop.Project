@@ -60,6 +60,15 @@
         </div>
     <% } %>
 
+    <% if (availableProducts?.length) { %>
+        <h2>Available products</h2>
+        <div class="available-products-list">
+            <% availableProducts.forEach(function(available) { %>
+                <%- include('available-product', { available: available }) %>
+            <% }); %>
+        </div>
+    <% } %>
+
     <div class="product-edit-footer">
         <button type="submit">Save changes</button>
         <a href="<%= `remove-product/${item.id}` %>">Delete product</a>

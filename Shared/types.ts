@@ -40,3 +40,5 @@ export interface ISimilarProduct {
   productId: string;
   similarId: string;
 }
+
+export type similarProductsCreatePayload = Omit<ISimilarProduct, "id">;

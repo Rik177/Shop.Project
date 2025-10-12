@@ -1,0 +1,22 @@
+<div class="available-product-item">
+    <div class="image">
+        <img src="<%= available.thumbnail?.url || "img/product-placeholder.png" %>"
+            alt="<%= available.title %>">
+    </div>
+    <div class="info">
+        <a class="title" href="<%= `${ available.id }` %>">
+            <%= available.title %>
+        </a>
+        <div class="title"><%= available.title %></div>
+        <div>
+            <span class="label">Price:</span> <%= available.price %>
+        </div>
+    </div>
+    <div class="add-similar-product">
+        <label for="available-<%= available.id %>">Add to similar</label>
+        <input type="checkbox"
+            id="available-<%= available.id %>"
+            value="<%= available.id %>"
+            name="similarToAdd">
+    </div>
+</div>
