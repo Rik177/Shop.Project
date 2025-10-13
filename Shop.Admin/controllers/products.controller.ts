@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { getProduct, getProducts, getSimilarProducts, getAvailableProductsForSimilar, removeProduct, searchProducts, updateProduct } from "../models/products.model";
+import { getProduct, getProducts, getSimilarProducts, getAvailableProductsForSimilar, removeProduct, searchProducts, updateProduct, createProduct } from "../models/products.model";
 import { IProductFilterPayload } from "@Shared/types";
 import { IProductEditData } from "../types";
 
@@ -21,6 +21,34 @@ productsRouter.get('/', async (req: Request, res: Response) => {
     });
   } catch (e) {
     throwServerError(res, e);
+  }
+});
+
+productsRouter.get('/new-product', async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    res.render("product/new-product");
+  } catch (e) {
+    throwServerError(res, e as Error);
+  }
+});
+
+productsRouter.post('/create', async (
+  req: Request<{}, {}, { title: string; description: string; price: string }>,
+  res: Response
+) => {
+  try {
+    const { title, description, price } = req.body;
+    const created = await createProduct({
+      title,
+      description,
+      price: Number(price)
+    });
+    res.redirect(`/${process.env.ADMIN_PATH}/${created.id}`);
+  } catch (e) {
+    throwServerError(res, e as Error);
   }
 });
 

@@ -35,6 +35,11 @@ export async function removeProduct(id: string): Promise<void> {
   await axios.delete(`${API_HOST}/products/${id}`);
 }
 
+export async function createProduct(payload: { title: string; description: string; price: number }): Promise<IProduct> {
+  const { data } = await axios.post<IProduct>(`${API_HOST}/products`, payload);
+  return data;
+}
+
 
 function splitNewImages(str = ""): string[] {
   return str

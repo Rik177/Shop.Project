@@ -9,7 +9,11 @@
 <body>
     <header class="header">
         <div class="logo"></div>
-        
+        <% if (!currentPath.includes('/auth/login')) { %>
+        <div>
+            <a href="/<%= adminPath %>/new-product">Add product</a>
+        </div>
+        <% } %>
         <div>
             <a href="<%= `/${process.env.ADMIN_PATH}/auth/logout` %>">LOGOUT</a>
         </div>

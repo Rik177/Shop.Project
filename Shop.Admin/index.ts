@@ -22,6 +22,12 @@ export default function (): Express {
   app.set("view engine", "ejs");
   app.set("views", "Shop.Admin/views");
   app.use(layouts);
+  
+  app.use((req, res, next) => {
+    res.locals.currentPath = req.path;
+    res.locals.adminPath = process.env.ADMIN_PATH;
+    next();
+  });
 
   app.use(express.static(__dirname + "/public"));
 

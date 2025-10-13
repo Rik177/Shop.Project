@@ -1,0 +1,22 @@
+<h1>Add product</h1>
+
+<form action="create" method="POST" class="product-form">
+    <div>
+        <label for="title">Title:</label>
+        <input id="title" type="text" name="title" required />
+    </div>
+
+    <div>
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" rows="5"></textarea>
+    </div>
+
+    <div>
+        <label for="price">Price:</label>
+        <input id="price" type="number" name="price" step="0.01" min="0" required />
+    </div>
+
+    <button type="submit">Save changes</button>
+</form>
+
+
