@@ -1,7 +1,7 @@
 body {
     background-color: #f1f1f1;
 
-    /* добавление шрифта для задачи 35.3.2 */
+    
     font-family: "Roboto", sans-serif;
     font-weight: 400;
     font-style: normal;
@@ -29,9 +29,6 @@ body {
     grid-row-gap: 40px;
 }
 
-/*
-product item
- */
 .product-item {
     display: flex;
 }
@@ -60,9 +57,7 @@ product item
     font-weight: 600;
 }
 
-/*
-product search
- */
+
 .products-search-form {
     margin-bottom: 40px;
 }
@@ -78,9 +73,7 @@ product search
     margin-bottom: 5px;
 }
 
-/*
-product edit
- */
+
 .product-edit-fields {
     width: 50%;
 }
@@ -99,9 +92,7 @@ product edit
     margin-bottom: 5px;
 }
 
-/*
-product comments
- */
+
 .product-edit-comments .product-comment {
     margin-bottom: 20px;
 }
@@ -116,9 +107,7 @@ product comments
     text-align: right;
 }
 
-/*
-product images
- */
+
 .product-edit-images {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -149,9 +138,7 @@ product images
     margin-top: 60px;
 }
 
-/*
-similar products
- */
+
 .similar-products-list {
     display: flex;
     flex-wrap: wrap;
@@ -205,9 +192,7 @@ similar products
     margin-top: auto;
 }
 
-/*
-available products
- */
+
 .available-products-list {
     display: flex;
     flex-wrap: wrap;

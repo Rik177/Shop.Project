@@ -60,7 +60,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px dashed #dee2e6;
+  border: 2px #dee2e6;
 }
 
 .product__placeholderImg {

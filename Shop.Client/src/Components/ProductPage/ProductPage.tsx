@@ -86,7 +86,7 @@ const ProductPage: React.FC = () => {
                                 <div className={styles.product__placeholder}>
                                     <img 
                                         src="/product-placeholder.png" 
-                                        alt="Заглушка" 
+                                        alt="placeholder" 
                                         className={styles.product__placeholderImg}
                                     />
                                 </div>
