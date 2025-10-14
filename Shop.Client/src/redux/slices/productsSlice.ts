@@ -1,30 +1,6 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit'
-
-export interface ProductImage { id: string; url: string; productId: string; main?: boolean }
-export interface ProductComment { 
-  id: string; 
-  productId: string;
-  name: string;
-  email: string;
-  body: string;
-}
-export interface Product {
-  id: string
-  title?: string
-  description?: string
-  price: number
-  thumbnail?: ProductImage | null
-  images?: ProductImage[]
-  comments?: ProductComment[]
-}
-
-interface ProductsState {
-  items: Product[]
-  currentProduct: Product | null
-  similarProducts: Product[]
-  loading: boolean
-  error: string | null
-}
+import type { IProduct, IComment } from '@Shared/types';
+import type { ProductsState } from '../../../types';
 
 const initialState: ProductsState = {
   items: [],
@@ -34,7 +10,7 @@ const initialState: ProductsState = {
   error: null,
 }
 
-export const fetchProducts = createAsyncThunk<Product[]>(
+export const fetchProducts = createAsyncThunk<IProduct[]>(
   'products/fetchAll',
   async () => {
     const res = await fetch('/api/products')
@@ -56,7 +32,7 @@ export interface ProductSearchFilter {
   priceTo?: number | string
 }
 
-export const searchProducts = createAsyncThunk<Product[], ProductSearchFilter>(
+export const searchProducts = createAsyncThunk<IProduct[], ProductSearchFilter>(
   'products/search',
   async (filter) => {
     const params = new URLSearchParams()
@@ -79,7 +55,7 @@ export const searchProducts = createAsyncThunk<Product[], ProductSearchFilter>(
   }
 )
 
-export const fetchProductById = createAsyncThunk<Product, string>(
+export const fetchProductById = createAsyncThunk<IProduct, string>(
   'products/fetchById',
   async (productId) => {
     const res = await fetch(`/api/products/${productId}`)
@@ -95,7 +71,7 @@ export const fetchProductById = createAsyncThunk<Product, string>(
   }
 )
 
-export const fetchSimilarProducts = createAsyncThunk<Product[], string>(
+export const fetchSimilarProducts = createAsyncThunk<IProduct[], string>(
   'products/fetchSimilar',
   async (productId) => {
     const res = await fetch(`/api/products/similar/${productId}`)
@@ -111,7 +87,7 @@ export const fetchSimilarProducts = createAsyncThunk<Product[], string>(
   }
 )
 
-export const addComment = createAsyncThunk<{ message: string }, { productId: string; name: string; email: string; body: string }>(
+export const addComment = createAsyncThunk<{ message: string }, Omit<IComment, "id">>(
   'products/addComment',
   async (commentData) => {
     const res = await fetch('/api/comments', {
@@ -144,7 +120,7 @@ const productsSlice = createSlice({
         state.loading = true
         state.error = null
       })
-      .addCase(fetchProducts.fulfilled, (state, action: PayloadAction<Product[]>) => {
+      .addCase(fetchProducts.fulfilled, (state, action: PayloadAction<IProduct[]>) => {
         state.items = action.payload
         state.loading = false
       })
@@ -156,7 +132,7 @@ const productsSlice = createSlice({
         state.loading = true
         state.error = null
       })
-      .addCase(searchProducts.fulfilled, (state, action: PayloadAction<Product[]>) => {
+      .addCase(searchProducts.fulfilled, (state, action: PayloadAction<IProduct[]>) => {
         state.items = action.payload
         state.loading = false
       })
@@ -168,7 +144,7 @@ const productsSlice = createSlice({
         state.loading = true
         state.error = null
       })
-      .addCase(fetchProductById.fulfilled, (state, action: PayloadAction<Product>) => {
+      .addCase(fetchProductById.fulfilled, (state, action: PayloadAction<IProduct>) => {
         state.currentProduct = action.payload
         state.loading = false
       })
@@ -176,7 +152,7 @@ const productsSlice = createSlice({
         state.loading = false
         state.error = action.error.message || 'Unknown error'
       })
-      .addCase(fetchSimilarProducts.fulfilled, (state, action: PayloadAction<Product[]>) => {
+      .addCase(fetchSimilarProducts.fulfilled, (state, action: PayloadAction<IProduct[]>) => {
         state.similarProducts = action.payload
       })
       .addCase(addComment.fulfilled, (state) => {

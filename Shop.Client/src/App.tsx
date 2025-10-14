@@ -1,5 +1,4 @@
 import { Routes, Route, BrowserRouter } from 'react-router-dom'
-import './App.css'
 import Home from './Components/Home/Home'
 import ProductsList from './Components/ProductsList/ProductsList'
 import ProductPage from './Components/ProductPage/ProductPage'

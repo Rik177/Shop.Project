@@ -301,7 +301,7 @@
 }
 
 .commentForm__submit {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #667eea;
   color: white;
   border: none;
   padding: 15px 30px;
@@ -340,7 +340,7 @@
   margin: 20px;
 }
 
-/* Responsive design */
+
 @media (max-width: 768px) {
   .productPage {
     padding: 10px;

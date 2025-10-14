@@ -68,13 +68,13 @@ const ProductPage: React.FC = () => {
     return (
         <div className={styles.productPage}>
             <div className={styles.product}>
-                {/* Заголовок товара */}
+                
                 <h1 className={styles.product__title}>{currentProduct.title}</h1>
                 
-                {/* Основная информация о товаре */}
+                
                 <div className={styles.product__main}>
                     <div className={styles.product__images}>
-                        {/* Изображение-обложка */}
+                        
                         <div className={styles.product__thumbnail}>
                             {currentProduct.thumbnail ? (
                                 <img 
@@ -93,7 +93,7 @@ const ProductPage: React.FC = () => {
                             )}
                         </div>
                         
-                        {/* Список остальных изображений */}
+                        
                         {currentProduct.images && currentProduct.images.length > 1 && (
                             <div className={styles.product__gallery}>
                                 <h3>Дополнительные изображения:</h3>
@@ -114,13 +114,13 @@ const ProductPage: React.FC = () => {
                     </div>
                     
                     <div className={styles.product__info}>
-                        {/* Описание */}
+                        
                         <div className={styles.product__description}>
                             <h3>Описание:</h3>
                             <p>{currentProduct.description || 'Описание отсутствует'}</p>
                         </div>
                         
-                        {/* Стоимость */}
+                        
                         <div className={styles.product__price}>
                             <h3>Цена:</h3>
                             <span className={styles.product__priceValue}>
@@ -130,7 +130,7 @@ const ProductPage: React.FC = () => {
                     </div>
                 </div>
                 
-                {/* Похожие товары */}
+                
                 {similarProducts.length > 0 && (
                     <div className={styles.similarProducts}>
                         <h2>Похожие товары:</h2>
@@ -153,11 +153,11 @@ const ProductPage: React.FC = () => {
                     </div>
                 )}
                 
-                {/* Комментарии */}
+                
                 <div className={styles.comments}>
                     <h2>Комментарии:</h2>
                     
-                    {/* Список комментариев */}
+                    
                     <div className={styles.comments__list}>
                         {currentProduct.comments && currentProduct.comments.length > 0 ? (
                             currentProduct.comments.map(comment => (
@@ -174,7 +174,7 @@ const ProductPage: React.FC = () => {
                         )}
                     </div>
                     
-                    {/* Форма добавления комментария */}
+                    
                     <form className={styles.commentForm} onSubmit={handleCommentSubmit}>
                         <h3>Добавить комментарий:</h3>
                         
