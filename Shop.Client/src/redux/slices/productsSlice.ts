@@ -1,10 +1,17 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit'
 
 export interface ProductImage { id: string; url: string; productId: string; main?: boolean }
-export interface ProductComment { id: string; productId: string }
+export interface ProductComment { 
+  id: string; 
+  productId: string;
+  name: string;
+  email: string;
+  body: string;
+}
 export interface Product {
   id: string
   title?: string
+  description?: string
   price: number
   thumbnail?: ProductImage | null
   images?: ProductImage[]
@@ -13,12 +20,16 @@ export interface Product {
 
 interface ProductsState {
   items: Product[]
+  currentProduct: Product | null
+  similarProducts: Product[]
   loading: boolean
   error: string | null
 }
 
 const initialState: ProductsState = {
   items: [],
+  currentProduct: null,
+  similarProducts: [],
   loading: false,
   error: null,
 }
@@ -68,10 +79,65 @@ export const searchProducts = createAsyncThunk<Product[], ProductSearchFilter>(
   }
 )
 
+export const fetchProductById = createAsyncThunk<Product, string>(
+  'products/fetchById',
+  async (productId) => {
+    const res = await fetch(`/api/products/${productId}`)
+    if (!res.ok) throw new Error('Failed to load product')
+
+    const contentType = res.headers.get('content-type') || ''
+    if (!contentType.includes('application/json')) {
+      const text = await res.text()
+      throw new Error(`Unexpected response format: ${text.slice(0, 80)}...`)
+    }
+    const data = await res.json()
+    return data
+  }
+)
+
+export const fetchSimilarProducts = createAsyncThunk<Product[], string>(
+  'products/fetchSimilar',
+  async (productId) => {
+    const res = await fetch(`/api/products/similar/${productId}`)
+    if (!res.ok) throw new Error('Failed to load similar products')
+
+    const contentType = res.headers.get('content-type') || ''
+    if (!contentType.includes('application/json')) {
+      const text = await res.text()
+      throw new Error(`Unexpected response format: ${text.slice(0, 80)}...`)
+    }
+    const data = await res.json()
+    return Array.isArray(data) ? data : []
+  }
+)
+
+export const addComment = createAsyncThunk<{ message: string }, { productId: string; name: string; email: string; body: string }>(
+  'products/addComment',
+  async (commentData) => {
+    const res = await fetch('/api/comments', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(commentData),
+    })
+    
+    if (!res.ok) throw new Error('Failed to add comment')
+    
+    const data = await res.text()
+    return { message: data }
+  }
+)
+
 const productsSlice = createSlice({
   name: 'products',
   initialState,
-  reducers: {},
+  reducers: {
+    clearCurrentProduct: (state) => {
+      state.currentProduct = null
+      state.similarProducts = []
+    }
+  },
   extraReducers: builder => {
     builder
       .addCase(fetchProducts.pending, state => {
@@ -98,7 +164,29 @@ const productsSlice = createSlice({
         state.loading = false
         state.error = action.error.message || 'Unknown error'
       })
+      .addCase(fetchProductById.pending, state => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(fetchProductById.fulfilled, (state, action: PayloadAction<Product>) => {
+        state.currentProduct = action.payload
+        state.loading = false
+      })
+      .addCase(fetchProductById.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.error.message || 'Unknown error'
+      })
+      .addCase(fetchSimilarProducts.fulfilled, (state, action: PayloadAction<Product[]>) => {
+        state.similarProducts = action.payload
+      })
+      .addCase(addComment.fulfilled, (state) => {
+        // После добавления комментария, перезагружаем продукт для получения обновленных комментариев
+        if (state.currentProduct) {
+          // Можно добавить логику для обновления комментариев без перезагрузки
+        }
+      })
   },
 })
 
+export const { clearCurrentProduct } = productsSlice.actions
 export default productsSlice.reducer
