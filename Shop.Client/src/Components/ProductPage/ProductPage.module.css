@@ -118,7 +118,6 @@
   transform: translateY(-50%);
 }
 
-/* Индикатор текущего изображения */
 .product__imageIndicator {
   position: absolute;
   bottom: 15px;
