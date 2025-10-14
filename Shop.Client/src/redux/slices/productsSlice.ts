@@ -155,12 +155,6 @@ const productsSlice = createSlice({
       .addCase(fetchSimilarProducts.fulfilled, (state, action: PayloadAction<IProduct[]>) => {
         state.similarProducts = action.payload
       })
-      .addCase(addComment.fulfilled, (state) => {
-        // После добавления комментария, перезагружаем продукт для получения обновленных комментариев
-        if (state.currentProduct) {
-          // Можно добавить логику для обновления комментариев без перезагрузки
-        }
-      })
   },
 })
 
