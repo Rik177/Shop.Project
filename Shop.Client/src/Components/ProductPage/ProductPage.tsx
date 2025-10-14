@@ -16,16 +16,40 @@ const ProductPage: React.FC = () => {
         body: ''
     });
 
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
     useEffect(() => {
         if (id) {
             dispatch(fetchProductById(id));
             dispatch(fetchSimilarProducts(id));
+            setCurrentImageIndex(0); 
         }
         
         return () => {
             dispatch(clearCurrentProduct());
         };
     }, [id, dispatch]);
+
+    
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            const allImages = getAllImages();
+            if (allImages.length <= 1) return;
+
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                handlePreviousImage();
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                handleNextImage();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [currentProduct]); 
 
     const handleSimilarProductClick = (productId: string) => {
         navigate(`/${productId}`);
@@ -53,6 +77,46 @@ const ProductPage: React.FC = () => {
         setCommentForm(prev => ({ ...prev, [field]: value }));
     };
 
+    
+    const getAllImages = () => {
+        if (!currentProduct) return [];
+        
+        const images = [];
+        if (currentProduct.thumbnail) {
+            images.push(currentProduct.thumbnail);
+        }
+        if (currentProduct.images) {
+            
+            const additionalImages = currentProduct.images.filter(img => 
+                img.url !== currentProduct.thumbnail?.url
+            );
+            images.push(...additionalImages);
+        }
+        return images;
+    };
+
+    const handlePreviousImage = () => {
+        const allImages = getAllImages();
+        if (allImages.length > 0) {
+            setCurrentImageIndex(prev => 
+                prev === 0 ? allImages.length - 1 : prev - 1
+            );
+        }
+    };
+
+    const handleNextImage = () => {
+        const allImages = getAllImages();
+        if (allImages.length > 0) {
+            setCurrentImageIndex(prev => 
+                prev === allImages.length - 1 ? 0 : prev + 1
+            );
+        }
+    };
+
+    const handleImageClick = (index: number) => {
+        setCurrentImageIndex(index);
+    };
+
     if (loading) {
         return <div className={styles.loading}>Загрузка...</div>;
     }
@@ -76,41 +140,90 @@ const ProductPage: React.FC = () => {
                     <div className={styles.product__images}>
                         
                         <div className={styles.product__thumbnail}>
-                            {currentProduct.thumbnail ? (
-                                <img 
-                                    src={currentProduct.thumbnail.url} 
-                                    alt={currentProduct.title} 
-                                    className={styles.product__thumbnailImg}
-                                />
-                            ) : (
-                                <div className={styles.product__placeholder}>
-                                    <img 
-                                        src="/product-placeholder.png" 
-                                        alt="placeholder" 
-                                        className={styles.product__placeholderImg}
-                                    />
-                                </div>
-                            )}
+                            {(() => {
+                                const allImages = getAllImages();
+                                const currentImage = allImages[currentImageIndex];
+                                
+                                if (currentImage) {
+                                    return (
+                                        <>
+                                            <img 
+                                                src={currentImage.url} 
+                                                alt={currentProduct.title} 
+                                                className={styles.product__thumbnailImg}
+                                            />
+                                            
+                                            
+                                            {allImages.length > 1 && (
+                                                <>
+                                                    <button 
+                                                        className={`${styles.product__imageNav} ${styles.product__imageNavPrev}`}
+                                                        onClick={handlePreviousImage}
+                                                        aria-label="Предыдущее изображение"
+                                                    >
+                                                        ‹
+                                                    </button>
+                                                    <button 
+                                                        className={`${styles.product__imageNav} ${styles.product__imageNavNext}`}
+                                                        onClick={handleNextImage}
+                                                        aria-label="Следующее изображение"
+                                                    >
+                                                        ›
+                                                    </button>
+                                                    
+                                                    
+                                                    <div className={styles.product__imageIndicator}>
+                                                        {allImages.map((_, index) => (
+                                                            <button
+                                                                key={index}
+                                                                className={`${styles.product__imageDot} ${
+                                                                    index === currentImageIndex ? styles.product__imageDotActive : ''
+                                                                }`}
+                                                                onClick={() => handleImageClick(index)}
+                                                                aria-label={`Изображение ${index + 1}`}
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                </>
+                                            )}
+                                        </>
+                                    );
+                                } else {
+                                    return (
+                                        <div className={styles.product__placeholder}>
+                                            <img 
+                                                src="/product-placeholder.png" 
+                                                alt="placeholder" 
+                                                className={styles.product__placeholderImg}
+                                            />
+                                        </div>
+                                    );
+                                }
+                            })()}
                         </div>
                         
                         
-                        {currentProduct.images && currentProduct.images.length > 1 && (
-                            <div className={styles.product__gallery}>
-                                <h3>Дополнительные изображения:</h3>
-                                <div className={styles.product__galleryList}>
-                                    {currentProduct.images
-                                        .filter(img => !img.main)
-                                        .map(img => (
+                        {(() => {
+                            const allImages = getAllImages();
+                            return allImages.length > 1 && (
+                                <div className={styles.product__gallery}>
+                                    <h3>Все изображения:</h3>
+                                    <div className={styles.product__galleryList}>
+                                        {allImages.map((img, index) => (
                                             <img 
-                                                key={img.id} 
+                                                key={img.id || index} 
                                                 src={img.url} 
-                                                alt={`${currentProduct.title} - изображение ${img.id}`}
-                                                className={styles.product__galleryImg}
+                                                alt={`${currentProduct.title} - изображение ${index + 1}`}
+                                                className={`${styles.product__galleryImg} ${
+                                                    index === currentImageIndex ? styles.product__galleryImgActive : ''
+                                                }`}
+                                                onClick={() => handleImageClick(index)}
                                             />
                                         ))}
+                                    </div>
                                 </div>
-                            </div>
-                        )}
+                            );
+                        })()}
                     </div>
                     
                     <div className={styles.product__info}>

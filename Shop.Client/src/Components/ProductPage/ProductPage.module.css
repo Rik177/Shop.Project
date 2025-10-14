@@ -40,6 +40,7 @@
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
 .product__thumbnailImg {
@@ -67,6 +68,84 @@
   width: 120px;
   height: 120px;
   opacity: 0.5;
+}
+
+
+.product__imageNav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 20px;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.product__imageNav:hover {
+  background: rgba(0, 0, 0, 0.8);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.product__imageNav:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.product__imageNavPrev {
+  left: 15px;
+}
+
+.product__imageNavNext {
+  right: 15px;
+}
+
+.product__imageNav:disabled {
+  background: rgba(0, 0, 0, 0.3);
+  cursor: not-allowed;
+  transform: translateY(-50%);
+}
+
+.product__imageNav:disabled:hover {
+  background: rgba(0, 0, 0, 0.3);
+  transform: translateY(-50%);
+}
+
+/* Индикатор текущего изображения */
+.product__imageIndicator {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 10;
+}
+
+.product__imageDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border: none;
+  padding: 0;
+}
+
+.product__imageDot:hover {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.product__imageDotActive {
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .product__gallery {
@@ -99,6 +178,11 @@
   transform: scale(1.05);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   border-color: #667eea;
+}
+
+.product__galleryImgActive {
+  border-color: #667eea;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
 .product__info {
@@ -394,6 +478,30 @@
   .product__thumbnailImg,
   .product__placeholder {
     height: 300px;
+  }
+  
+  .product__imageNav {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+  
+  .product__imageNavPrev {
+    left: 10px;
+  }
+  
+  .product__imageNavNext {
+    right: 10px;
+  }
+  
+  .product__imageIndicator {
+    bottom: 10px;
+    gap: 4px;
+  }
+  
+  .product__imageDot {
+    width: 6px;
+    height: 6px;
   }
   
   .product__priceValue {
