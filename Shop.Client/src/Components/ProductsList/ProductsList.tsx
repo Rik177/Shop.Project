@@ -71,11 +71,11 @@ const ProductsList: React.FC = () => {
                 const commentsCount = p.comments?.length || 0
                 return (
                     <div key={p.id} className={  styles.productsList__card }>
-                        <Link to={`/product/${p.id}`} className={  styles.productsList__link }>
+                        <Link to={`/${p.id}`} className={  styles.productsList__link }>
                             <img src={imgUrl} alt={p.title || 'image'} className={ styles.productsList__thumb } onError={(e) => { (e.target as HTMLImageElement).src = placeholder }} />
                     </Link>
                     <div className={  styles.productsList__info }>
-                        <Link to={`/product/${p.id}`} className={  styles.productsList__link }>
+                        <Link to={`/${p.id}`} className={  styles.productsList__link }>
                                 <div className={ styles.productsList__title }>{p.title || 'Без названия'}</div>
                         </Link>
                         <div className={ styles.productsList__price }>{Number(p.price) || 0} ₽</div>

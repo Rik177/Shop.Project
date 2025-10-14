@@ -28,7 +28,7 @@ const ProductPage: React.FC = () => {
     }, [id, dispatch]);
 
     const handleSimilarProductClick = (productId: string) => {
-        navigate(`/product/${productId}`);
+        navigate(`/${productId}`);
     };
 
     const handleCommentSubmit = async (e: React.FormEvent) => {
@@ -42,10 +42,10 @@ const ProductPage: React.FC = () => {
             body: commentForm.body
         }));
         
-        // Очищаем форму
+        
         setCommentForm({ name: '', email: '', body: '' });
         
-        // Перезагружаем продукт для получения обновленных комментариев
+        
         dispatch(fetchProductById(id));
     };
 
