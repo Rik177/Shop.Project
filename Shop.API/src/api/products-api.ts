@@ -133,7 +133,7 @@ productsRouter.post('/', async (
       await connection.query<OkPacket>(INSERT_PRODUCT_IMAGES_QUERY, [values]);
     }
 
-    // Получаем созданный товар из базы данных
+    
     const [rows] = await connection.query<IProductEntity[]>(
       "SELECT * FROM products WHERE product_id = ?",
       [productId]
@@ -145,7 +145,7 @@ productsRouter.post('/', async (
       return;
     }
 
-    // Маппим данные товара
+    
     const createdProduct = mapProductsEntity(rows)[0];
 
     res.status(201);

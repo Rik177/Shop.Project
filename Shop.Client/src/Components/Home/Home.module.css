@@ -1,0 +1,14 @@
+.home {
+    display: 'flex';
+    flex-direction: column;
+    gap: 16;
+}
+
+.home__buttons {
+    display: flex;
+    column-gap: 12px;
+}
+
+.home__error {
+    color: rgb(161, 67, 67);
+}
